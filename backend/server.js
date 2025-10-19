@@ -16,6 +16,9 @@ app.use(cookieParser())
 app.use('/api/auth', authRoute)
 app.use('/api/messages', MessageRoute)
 
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
 
 
 
