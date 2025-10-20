@@ -89,14 +89,19 @@ export const signup = async (req, res) => {
   };
   
   export const logout = (req, res) => {
-    try {
-     res.cookie("jwt", "", {  maxAge: 0 });
-      res.status(200).json({ message: "User logged out successfully" });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "Something went wrong" });
-    }
-  };
+  try {
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    });
+
+    return res.status(200).json({ message: "User logged out successfully" });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
 
  export const updateProfile = async (req, res) => {
   try {
