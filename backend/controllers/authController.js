@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import User from "../models/userModel.js";
 import { generateToken } from "../lib/utils.js";
+import cloudinary from "../lib/cloudinary.js";
 
 export const signup = async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -97,27 +98,43 @@ export const signup = async (req, res) => {
     }
   };
 
-  export const updateProfile = async (req, res) => {
-    try {
-      const {profilePic} = req.body;
-      const userId = req.user._id;
+ export const updateProfile = async (req, res) => {
+  try {
+    const { profilePic } = req.body;
+    const userId = req.user._id;
 
-      const uploadResponse = await cloudinary.uploader.upload(profilePic)
-      const updatedUser = await User.findByIdAndUpdate(userId, {profilePic: uploadResponse.secure_url}, {new: true});
+    console.log("🟢 Received update-profile request");
+    console.log("User ID:", userId);
+    console.log("Profile pic length:", profilePic?.length);
+    console.log("Cloudinary env:", process.env.CLOUDINARY_NAME, process.env.CLOUDINARY_API_KEY);
 
-      res.status(200).json(updatedUser);
-      
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "Something went wrong" });
+    if (!profilePic) {
+      return res.status(400).json({ message: "Profile pic is required" });
     }
-  };
+
+    const uploadResponse = await cloudinary.uploader.upload(profilePic);
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: uploadResponse.secure_url },
+      { new: true }
+    );
+
+   res.status(200).json({
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.log("error in update profile:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
   export const checkAuth = (req, res) => {
     try {
       res.status(200).json(req.user);
     } catch (error) {
       console.log( 'error in checkout controller ',error);
-      res.status(500).json({ message: "Something went wrong" });
+      res.status(500).json({ message: error.message });
     }
   }
