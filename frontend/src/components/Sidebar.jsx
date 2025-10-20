@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
-import { useChatStore } from "../store/useChatStore"
-import SidebarSkeleton from "./skeletons/SidebarSkeleton";
+import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
+import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
 
 const Sidebar = () => {
   const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } = useChatStore();
-  const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   const { onlineUsers } = useAuthStore();
-
-   const filteredUsers = showOnlineOnly
-    ? users.filter((user) => onlineUsers.includes(user._id))
-    : users;
+  const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   useEffect(() => {
     getUsers();
-  }, []);
+  }, [getUsers]);
+
+  const filteredUsers = showOnlineOnly
+    ? users.filter((user) => onlineUsers.includes(user._id))
+    : users;
 
   if (isUsersLoading) return <SidebarSkeleton />;
 
@@ -82,7 +82,6 @@ const Sidebar = () => {
         )}
       </div>
     </aside>
-  )
-}
-
-export default Sidebar
+  );
+};
+export default Sidebar;
