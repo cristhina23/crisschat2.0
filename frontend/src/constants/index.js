@@ -2,11 +2,17 @@ export const THEMES = [
   'light',
   'dark',
   'aqua',
-  'aqua-dark',
+  'bumblebee',
   'graydark',
   'cupcake',
   'cupcake-light',
   'winter',
   'valentine',
-  'black'
-]
+  'black',
+  'garden',
+  'fantasy',
+  'dracula',
+  'acid',
+  'night',
+  'abyss'
+] 
