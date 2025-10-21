@@ -6,8 +6,10 @@ import { connectDB } from './lib/db.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 
+
 dotenv.config()
-const app = express()
+
+import { app, server } from './lib/socket.js'
 
 const PORT = process.env.PORT
 
@@ -48,7 +50,7 @@ const startServer = async () => {
     await connectDB(); // conectar primero
     console.log('MongoDB connected');
 
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log('Server is running on port: ' + PORT);
     });
   } catch (error) {
