@@ -50,9 +50,11 @@ app.get("/", (req, res) => {
 //  Serve frontend in production
 if (process.env.NODE_ENV === "production") {
   const frontendPath = path.join(__dirname, "../frontend/dist");
+
+  // Servir los archivos estáticos del frontend
   app.use(express.static(frontendPath));
 
- 
+  // Redirigir todas las rutas al index.html (SPA)
   app.use((req, res) => {
     res.sendFile(path.join(frontendPath, "index.html"));
   });
