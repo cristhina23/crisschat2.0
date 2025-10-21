@@ -22,7 +22,7 @@ app.use(cookieParser());
 //  CORS setup
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://crisschat2-0.vercel.app",
+  process.env.CLIENT_URL,
 ];
 
 app.use(
