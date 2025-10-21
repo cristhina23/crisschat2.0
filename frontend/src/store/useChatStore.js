@@ -53,6 +53,8 @@ export const useChatStore = create((set, get) => ({
     // todo: optimaze this later
     socket.on("message", (newMessage) => {
 
+      if (newMessage.senderId !== selectedUser._id) return;
+
       const existing = get().messages.find((msg) => msg._id === newMessage._id);
       if (existing) return;
 
