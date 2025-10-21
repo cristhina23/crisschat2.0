@@ -1,26 +1,28 @@
-import express from 'express'
-import  dotenv from 'dotenv'
-import authRoute from './routes/authRoute.js'
-import MessageRoute from './routes/messageRoute.js'
-import { connectDB } from './lib/db.js'
-import cookieParser from 'cookie-parser'
-import cors from 'cors'
-import path from 'path'
+import express from "express";
+import dotenv from "dotenv";
+import authRoute from "./routes/authRoute.js";
+import MessageRoute from "./routes/messageRoute.js";
+import { connectDB } from "./lib/db.js";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import path from "path";
 
-dotenv.config()
+dotenv.config();
 
-import { app, server } from './lib/socket.js'
+import { app, server } from "./lib/socket.js";
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
+// Middlewares
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
-app.use(cookieParser())
+app.use(cookieParser());
 
+// CORS setup
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://crisschat2-0.vercel.app"
+  "https://crisschat2-0.vercel.app",
 ];
 
 app.use(
@@ -36,32 +38,35 @@ app.use(
   })
 );
 
+// Routes
+app.use("/api/auth", authRoute);
+app.use("/api/messages", MessageRoute);
 
-app.use('/api/auth', authRoute)
-app.use('/api/messages', MessageRoute)
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+// Static frontend for production
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/dist')));
-
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+  //  Compatible with Express 5
+  app.get("/*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
   });
 }
 
+// Start server
 const startServer = async () => {
   try {
-    await connectDB(); // conectar primero
-    console.log('MongoDB connected');
+    await connectDB();
+    console.log(" MongoDB connected");
 
     server.listen(PORT, () => {
-      console.log('Server is running on port: ' + PORT);
+      console.log(` Server is running on port: ${PORT}`);
     });
   } catch (error) {
-    console.error('Failed to connect to DB:', error);
+    console.error(" Failed to connect to DB:", error);
   }
 };
 
