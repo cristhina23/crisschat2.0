@@ -1,10 +1,12 @@
 import axios from "axios";
 
-const isLocalhost = window.location.hostname === "localhost";
+/*export const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,  // tomará la URL correcta según el entorno
+  withCredentials: true,
+});*/
+
 
 export const api = axios.create({
-  baseURL: isLocalhost
-    ? "http://localhost:5001/api" 
-    : import.meta.env.VITE_API_URL, 
+  baseURL: import.meta.env.MODE === 'development' ? import.meta.env.VITE_API_URL : '/api',  
   withCredentials: true,
 });
