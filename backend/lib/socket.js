@@ -5,45 +5,35 @@ import express from "express";
 const app = express();
 const server = http.createServer(app);
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://crisschat2-0.vercel.app"
-];
-
 const io = new Server(server, {
   cors: {
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
+    origin: ["http://localhost:5173", process.env.CLIENT_URL],
   },
 });
 
-// storage for online users
+export function getReceiverSocketId(userId) {
+  return userSocketMap[userId];
+}
 
-const userSockerMap = {};
+// used to store online users
+const userSocketMap = {}; // {userId: socketId}
 
 io.on("connection", (socket) => {
-  console.log('User connected', socket.id);
+  console.log("A user connected", socket.id);
+   console.log("Handshake query:", socket.handshake.query); 
 
-  const usertId = socket.handshake.query.userId;
+  const userId = socket.handshake.query.userId;
+  console.log("UserId recibido:", userId); // 👈 Y ESTO
+  if (userId) userSocketMap[userId] = socket.id;
 
-  if (usertId) {
-    userSockerMap[usertId] = socket.id;
-  }
+  // io.emit() is used to send events to all the connected clients
+  io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-  io.emit("getOnlineUsers", Object.keys(userSockerMap));
-  
+  socket.on("disconnect", () => {
+    console.log("A user disconnected", socket.id);
+    delete userSocketMap[userId];
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  });
+});
 
-  socket.on('disconnect', (socket) => {
-    console.log('User disconnected', socket.id);
-    delete userSockerMap[usertId];
-    io.emit("getOnlineUsers", Object.keys(userSockerMap));
-  })
-})
-
-export { io, server, app };
+export { io, app, server };

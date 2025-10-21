@@ -10,7 +10,7 @@ export const useChatStore = create((set, get) => ({
   isUsersLoading: false,
   isMessagesLoading: false,
   //isTyping: false,
-  //onlineUsers: [],
+  
 
   getUsers: async () => {
     set({ isUsersLoading: true });
@@ -43,6 +43,26 @@ export const useChatStore = create((set, get) => ({
     } catch (error) {
       toast.error(error.response.data.message);
     }
+  },
+  subscribeToMessages: async () => {
+    const { selectedUser } = get();
+    if (!selectedUser) return;
+
+    const socket = useAuthStore.getState().socket
+
+    // todo: optimaze this later
+    socket.on("message", (newMessage) => {
+
+      const existing = get().messages.find((msg) => msg._id === newMessage._id);
+      if (existing) return;
+
+      set({ messages: [...get().messages, newMessage] });
+    })
+  },
+  unsubscribeFromMessages: async () => {
+    const socket = useAuthStore.getState().socket
+
+    socket.off("newMessage");
   },
   
   
