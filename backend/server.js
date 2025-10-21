@@ -14,12 +14,12 @@ import { app, server } from "./lib/socket.js";
 const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
-// Middlewares
+//  Middlewares
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
 
-// CORS setup
+//  CORS setup
 const allowedOrigins = [
   "http://localhost:5173",
   "https://crisschat2-0.vercel.app",
@@ -38,32 +38,34 @@ app.use(
   })
 );
 
-// Routes
+//  API Routes
 app.use("/api/auth", authRoute);
 app.use("/api/messages", MessageRoute);
 
+// Test route
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-// Static frontend for production
+//  Serve frontend in production
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  const frontendPath = path.join(__dirname, "../frontend/dist");
+  app.use(express.static(frontendPath));
 
-  //  Compatible with Express 5
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+ 
+  app.use((req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
   });
 }
 
-// Start server
+//  Start server
 const startServer = async () => {
   try {
     await connectDB();
     console.log(" MongoDB connected");
 
     server.listen(PORT, () => {
-      console.log(` Server is running on port: ${PORT}`);
+      console.log(` Server running on port ${PORT}`);
     });
   } catch (error) {
     console.error(" Failed to connect to DB:", error);
