@@ -3,9 +3,7 @@ import dotenv from "dotenv";
 import authRoute from "./routes/authRoute.js";
 import MessageRoute from "./routes/messageRoute.js";
 import { connectDB } from "./lib/db.js";
-import cookieParser from "cookie-parser";
-import cors from "cors";
-import path from "path";
+import cookieParser from "cookie-parser";import path from "path";
 
 dotenv.config();
 
@@ -19,24 +17,6 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
 
-//  CORS setup
-const allowedOrigins = [
-  "http://localhost:5173",
-  process.env.CLIENT_URL,
-];
-
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
 
 //  API Routes
 app.use("/api/auth", authRoute);
@@ -47,19 +27,12 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-//  Serve frontend in production
-if (process.env.NODE_ENV === "production") {
-  const frontendPath = path.join(__dirname, "../frontend/dist");
+// ✅ Servir el frontend de producción (React + Vite)
+app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
 
-  // Servir los archivos estáticos del frontend
-  app.use(express.static(frontendPath));
-
-  // Redirigir todas las rutas al index.html (SPA)
-  app.use((req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
-  });
-}
-
+app.get(/^(?!\/api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "frontend", "dist", "index.html"));
+});
 //  Start server
 const startServer = async () => {
   try {

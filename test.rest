@@ -1,0 +1,30 @@
+### Signup (crear usuario)
+POST  http://localhost:5001/api/auth/signup
+Content-Type: application/json
+
+{
+  "fullName": "Cristhina",
+  "email": "cristina@example.com",
+  "password": "123456"
+}
+
+
+### Login (iniciar sesión)
+
+POST  http://localhost:5001/api/auth/login
+Content-Type: application/json
+
+{
+  "fullName": "Cristhina",
+  "email": "cristina@example.com",
+  "password": "123456"
+}
+
+
+### Logout
+POST  http://localhost:5001/api/auth/logout
+Content-Type: application/json
+
+### check
+GET  http://localhost:5001/api/auth/check
+Content-Type: application/json
