@@ -27,8 +27,8 @@ app.use("/api/messages", MessageRoute);
 const frontendPath = path.join(__dirname, "../frontend/dist");
 app.use(express.static(frontendPath));
 
-// ✅ Esta versión funciona mejor en Express 5
-app.get("*", (req, res) => {
+// ✅ Compatible con Express 5
+app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"));
 });
 
