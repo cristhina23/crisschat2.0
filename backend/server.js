@@ -23,11 +23,6 @@ app.use(cookieParser());
 app.use("/api/auth", authRoute);
 app.use("/api/messages", MessageRoute);
 
-// Test route
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
 // ✅ Servir el frontend de producción (React + Vite)
 
   app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
