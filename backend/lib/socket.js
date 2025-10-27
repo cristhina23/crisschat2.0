@@ -7,7 +7,8 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["https://crisschat2-0.onrender.com"],
+    origin: ["http://localhost:5173",        // para desarrollo local con Vite
+      "https://crisschat2-0.onrender.com"],   // para producción con Render],
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
