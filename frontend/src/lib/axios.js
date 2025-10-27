@@ -7,6 +7,6 @@ import axios from "axios";
 
 
 export const api = axios.create({
-  baseURL: import.meta.env.MODE === 'development' ? import.meta.env.VITE_API_URL : '/api',  
+  baseURL: import.meta.env.MODE === 'development' ? 'http://localhost:5001' : '/api',  
   withCredentials: true,
 });

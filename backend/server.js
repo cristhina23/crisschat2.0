@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 import authRoute from "./routes/authRoute.js";
 import MessageRoute from "./routes/messageRoute.js";
 import { connectDB } from "./lib/db.js";
-import cookieParser from "cookie-parser";import path from "path";
+import cookieParser from "cookie-parser";
+import path from "path";
 
 dotenv.config();
 
@@ -28,11 +29,13 @@ app.get("/", (req, res) => {
 });
 
 // ✅ Servir el frontend de producción (React + Vite)
-app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
+if ( process.env.NODE_ENV === "production" ) {
+  app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
 
-app.get(/^(?!\/api).*/, (req, res) => {
+  app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "..", "frontend", "dist", "index.html"));
 });
+}
 //  Start server
 const startServer = async () => {
   try {
